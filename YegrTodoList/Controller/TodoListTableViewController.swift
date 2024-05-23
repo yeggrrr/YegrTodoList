@@ -69,6 +69,7 @@ extension TodoListTableViewController: AddButtonDelegate {
         guard let newTodo = textField.text else { return }
         todo.append(newTodo)
         todoListTableView.reloadData()
+        textField.text = ""
     }
 }
 
