@@ -34,6 +34,9 @@
                                             </constraints>
                                             <state key="normal" title="Button"/>
                                             <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                            <connections>
+                                                <action selector="addButtonClicked:" destination="JRE-o7-lyG" eventType="touchUpInside" id="bVc-LB-QEE"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                 </stackView>
@@ -82,6 +85,7 @@
                         <outlet property="addButton" destination="fmr-Ha-IaL" id="kmL-lF-tS3"/>
                         <outlet property="inputTodoTextField" destination="uFo-2U-fHy" id="G0Z-GZ-HUo"/>
                         <outlet property="todoInputBackgroundView" destination="ZK1-Ee-oVM" id="1fR-vT-I8f"/>
+                        <outlet property="todoListTableView" destination="Jl3-rZ-Chc" id="CU4-pq-RTQ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xBj-0s-72n" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

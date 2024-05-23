@@ -8,7 +8,7 @@
 import UIKit
 
 class TodoListTableViewController: UITableViewController {
-    
+    @IBOutlet var todoListTableView: UITableView!
     @IBOutlet var todoInputBackgroundView: UIView!
     @IBOutlet var inputTodoTextField: UITextField!
     @IBOutlet var addButton: UIButton!
@@ -48,7 +48,19 @@ class TodoListTableViewController: UITableViewController {
         
         return cell
     }
-    
+    // 삭제
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            todo.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+    // 추가
+    @IBAction func addButtonClicked(_ sender: UIButton) {
+        guard let newTodo = inputTodoTextField.text else { return }
+        todo.append(newTodo)
+        todoListTableView.reloadData()
+    }
 }
 
 
