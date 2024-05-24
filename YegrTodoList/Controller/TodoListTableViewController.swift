@@ -10,21 +10,56 @@ import UIKit
 
 class TodoListTableViewController: UITableViewController {
     @IBOutlet var todoListTableView: UITableView!
- 
+    
     var data = DataStorage.shared.todoList
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.reloadData()
+        initializeDataList()
     }
     
     @objc func checkButtonClicked(sender: UIButton) {
-        data[sender.tag].check.toggle()
+        DataStorage.shared.todoList[sender.tag].check.toggle()
         tableView.reloadData()
+        
+        let encoder = JSONEncoder()
+        let newTodoList = DataStorage.shared.todoList
+        
+        do {
+            let result = try encoder.encode(newTodoList)
+            UserDefaults.standard.setValue(result, forKey: "check")
+            print(DataStorage.shared.todoList)
+        } catch {
+            print("encoding error: \(error)")
+        }
     }
     
     @objc func starButtonClicked(sender: UIButton) {
-        data[sender.tag].star.toggle()
+        DataStorage.shared.todoList[sender.tag].star.toggle()
         tableView.reloadData()
+        
+        // UserDefaults - star
+    }
+    
+    func initializeDataList() {
+        let decodedData = fetchDecodedData(forkey: "check")
+        DataStorage.shared.todoList = decodedData
+    }
+    
+    func fetchDecodedData(forkey: String) -> [DataStorage.Todo] {
+        guard let todoData = UserDefaults.standard.object(forKey: forkey) as? Data else { return [] }
+        let decorder = JSONDecoder()
+        
+        do {
+            let result = try decorder.decode([DataStorage.Todo].self, from: todoData)
+            print("decoded data: \(result)")
+            return result
+        } catch {
+            print(error)
+        }
+        return []
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -35,7 +70,7 @@ class TodoListTableViewController: UITableViewController {
         if section == 0 {
             return 1
         } else {
-            return data.count
+            return DataStorage.shared.todoList.count
         }
     }
     
@@ -57,18 +92,18 @@ class TodoListTableViewController: UITableViewController {
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as? TodoTableViewCell else { return UITableViewCell() }
-            let checkImageName = data[indexPath.row].check ? "checkmark.square.fill" : "checkmark.square"
+            let checkImageName = DataStorage.shared.todoList[indexPath.row].check ? "checkmark.square.fill" : "checkmark.square"
             let checkImage = UIImage(systemName: checkImageName)
             cell.checkButton.setImage(checkImage, for: .normal)
             cell.checkButton.tintColor = .black
             cell.checkButton.tag = indexPath.row
             cell.checkButton.addTarget(self, action: #selector(checkButtonClicked), for: .touchUpInside)
             
-            cell.titleLabel.text = data[indexPath.row].title
+            cell.titleLabel.text = DataStorage.shared.todoList[indexPath.row].title
             cell.titleLabel.textColor = .black
             cell.titleLabel.font = .systemFont(ofSize: 17)
             
-            let starImageName = data[indexPath.row].star ? "star.fill" : "star"
+            let starImageName = DataStorage.shared.todoList[indexPath.row].star ? "star.fill" : "star"
             let starImage = UIImage(systemName: starImageName)
             cell.starButton.setImage(starImage, for: .normal)
             cell.starButton.tintColor = .systemRed
@@ -86,8 +121,10 @@ class TodoListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.section != 0 {
             if editingStyle == .delete {
-                data.remove(at: indexPath.row)
+                DataStorage.shared.todoList.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
+                
+                // UserDefault - key: "delete"
             }
         }
     }
@@ -106,7 +143,7 @@ extension TodoListTableViewController: AddButtonDelegate {
         } else {
             let alert = UIAlertController(title: "'\(newTitle)'을 추가하시겠습니까?", message: "", preferredStyle: .alert)
             let registerButton = UIAlertAction(title: "추가", style: .default) { _ in
-                self.data.append(newTodo)
+                DataStorage.shared.todoList.append(newTodo)
                 self.todoListTableView.reloadData()
                 // UserDefault - key: "add"
                 textField.text = ""
