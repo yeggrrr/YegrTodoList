@@ -94,7 +94,6 @@ class TodoListTableViewController: UITableViewController {
         return indexPath.section != 0
     }
     
-    // 삭제
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.section != 0 {
             if editingStyle == .delete {
@@ -109,9 +108,26 @@ extension TodoListTableViewController: AddButtonDelegate {
     func addButtonClicked(textField: UITextField) {
         guard let newTitle = textField.text else { return }
         let newTodo = Todo(check: false, title: newTitle, star: false)
-        todoList.append(newTodo)
-        todoListTableView.reloadData()
-        textField.text = ""
+        
+        if newTitle == "" {
+            let alert = UIAlertController(title: "구매하실 품목을 입력해주세요!", message: "", preferredStyle: .alert)
+            let checkButton = UIAlertAction(title: "확인", style: .cancel)
+            alert.addAction(checkButton)
+            present(alert, animated: true)
+        } else {
+            let alert = UIAlertController(title: "'\(newTitle)'을 추가하시겠습니까?", message: "", preferredStyle: .alert)
+            let registerButton = UIAlertAction(title: "추가", style: .default) { _ in
+                self.todoList.append(newTodo)
+                self.todoListTableView.reloadData()
+                textField.text = ""
+            }
+            let cancelButton = UIAlertAction(title: "취소", style: .cancel) { _ in
+                textField.text = ""
+            }
+            alert.addAction(registerButton)
+            alert.addAction(cancelButton)
+            present(alert, animated: true)
+        }
     }
 }
 
