@@ -15,6 +15,7 @@
 		688DEFB62BFF4C350002BBE5 /* TodoListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 688DEFB52BFF4C350002BBE5 /* TodoListTableViewController.swift */; };
 		688DEFB82BFF4FC20002BBE5 /* TodoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 688DEFB72BFF4FC20002BBE5 /* TodoTableViewCell.swift */; };
 		688DEFBA2BFF96030002BBE5 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 688DEFB92BFF96030002BBE5 /* TextFieldTableViewCell.swift */; };
+		68920A232C0084DD00833D35 /* DataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68920A222C0084DD00833D35 /* DataStorage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		688DEFB52BFF4C350002BBE5 /* TodoListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListTableViewController.swift; sourceTree = "<group>"; };
 		688DEFB72BFF4FC20002BBE5 /* TodoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoTableViewCell.swift; sourceTree = "<group>"; };
 		688DEFB92BFF96030002BBE5 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		68920A222C0084DD00833D35 /* DataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				68920A192BFFA08500833D35 /* Storyboard */,
 				68920A182BFFA07900833D35 /* Controller */,
 				68920A1A2BFFA09E00833D35 /* Cell */,
+				68920A222C0084DD00833D35 /* DataStorage.swift */,
 				688DEFA82BFF4B510002BBE5 /* Assets.xcassets */,
 				688DEFAA2BFF4B510002BBE5 /* LaunchScreen.storyboard */,
 				688DEFAD2BFF4B510002BBE5 /* Info.plist */,
@@ -171,6 +174,7 @@
 				688DEFA02BFF4B500002BBE5 /* AppDelegate.swift in Sources */,
 				688DEFA22BFF4B500002BBE5 /* SceneDelegate.swift in Sources */,
 				688DEFBA2BFF96030002BBE5 /* TextFieldTableViewCell.swift in Sources */,
+				68920A232C0084DD00833D35 /* DataStorage.swift in Sources */,
 				688DEFB82BFF4FC20002BBE5 /* TodoTableViewCell.swift in Sources */,
 				688DEFB62BFF4C350002BBE5 /* TodoListTableViewController.swift in Sources */,
 			);

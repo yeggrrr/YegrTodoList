@@ -7,34 +7,24 @@
 
 import UIKit
 
-struct Todo {
-    var check: Bool
-    let title: String
-    var star: Bool
-}
 
 class TodoListTableViewController: UITableViewController {
     @IBOutlet var todoListTableView: UITableView!
+ 
+    var data = DataStorage.shared.todoList
     
-    var todoList = [
-        Todo(check: false, title: "그립톡 구매하기", star: false),
-        Todo(check: false, title: "제로 콜라 구매", star: false),
-        Todo(check: false, title: "아이패드 최저가 알아보기", star: false),
-        Todo(check: false, title: "양말", star: false),
-    ]
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
     
     @objc func checkButtonClicked(sender: UIButton) {
-        todoList[sender.tag].check.toggle()
+        data[sender.tag].check.toggle()
         tableView.reloadData()
     }
     
     @objc func starButtonClicked(sender: UIButton) {
-        todoList[sender.tag].star.toggle()
+        data[sender.tag].star.toggle()
         tableView.reloadData()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -45,7 +35,7 @@ class TodoListTableViewController: UITableViewController {
         if section == 0 {
             return 1
         } else {
-            return todoList.count
+            return data.count
         }
     }
     
@@ -67,19 +57,18 @@ class TodoListTableViewController: UITableViewController {
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as? TodoTableViewCell else { return UITableViewCell() }
-            
-            let checkImageName = todoList[indexPath.row].check ? "checkmark.square.fill" : "checkmark.square"
+            let checkImageName = data[indexPath.row].check ? "checkmark.square.fill" : "checkmark.square"
             let checkImage = UIImage(systemName: checkImageName)
             cell.checkButton.setImage(checkImage, for: .normal)
             cell.checkButton.tintColor = .black
             cell.checkButton.tag = indexPath.row
             cell.checkButton.addTarget(self, action: #selector(checkButtonClicked), for: .touchUpInside)
             
-            cell.titleLabel.text = todoList[indexPath.row].title
+            cell.titleLabel.text = data[indexPath.row].title
             cell.titleLabel.textColor = .black
             cell.titleLabel.font = .systemFont(ofSize: 17)
             
-            let starImageName = todoList[indexPath.row].star ? "star.fill" : "star"
+            let starImageName = data[indexPath.row].star ? "star.fill" : "star"
             let starImage = UIImage(systemName: starImageName)
             cell.starButton.setImage(starImage, for: .normal)
             cell.starButton.tintColor = .systemRed
@@ -97,7 +86,7 @@ class TodoListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.section != 0 {
             if editingStyle == .delete {
-                todoList.remove(at: indexPath.row)
+                data.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }
@@ -107,7 +96,7 @@ class TodoListTableViewController: UITableViewController {
 extension TodoListTableViewController: AddButtonDelegate {
     func addButtonClicked(textField: UITextField) {
         guard let newTitle = textField.text else { return }
-        let newTodo = Todo(check: false, title: newTitle, star: false)
+        let newTodo = DataStorage.Todo(check: false, title: newTitle, star: false)
         
         if newTitle == "" {
             let alert = UIAlertController(title: "구매하실 품목을 입력해주세요!", message: "", preferredStyle: .alert)
@@ -117,8 +106,9 @@ extension TodoListTableViewController: AddButtonDelegate {
         } else {
             let alert = UIAlertController(title: "'\(newTitle)'을 추가하시겠습니까?", message: "", preferredStyle: .alert)
             let registerButton = UIAlertAction(title: "추가", style: .default) { _ in
-                self.todoList.append(newTodo)
+                self.data.append(newTodo)
                 self.todoListTableView.reloadData()
+                // UserDefault - key: "add"
                 textField.text = ""
             }
             let cancelButton = UIAlertAction(title: "취소", style: .cancel) { _ in
@@ -134,4 +124,3 @@ extension TodoListTableViewController: AddButtonDelegate {
 protocol AddButtonDelegate: AnyObject {
     func addButtonClicked(textField: UITextField)
 }
-
