@@ -16,7 +16,10 @@ class DataStorage {
         var star: Bool
     }
     
-    var todoList: [Todo] = [
+    var todoList: [Todo] = []
+    
+    // 초기 데이터로 사용하고 싶을 때 사용
+    let testData: [Todo] = [
         Todo(check: false, title: "그립톡 구매하기", star: false),
         Todo(check: false, title: "제로 콜라 구매", star: false),
         Todo(check: false, title: "아이패드 최저가 알아보기", star: false),

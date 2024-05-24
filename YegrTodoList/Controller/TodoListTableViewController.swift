@@ -7,44 +7,60 @@
 
 import UIKit
 
+enum UserDefaultsKeys: String {
+    case todo = "todoList"
+}
 
 class TodoListTableViewController: UITableViewController {
     @IBOutlet var todoListTableView: UITableView!
     
-    var data = DataStorage.shared.todoList
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.reloadData()
+    
         initializeDataList()
+        tableView.reloadData()
     }
     
     @objc func checkButtonClicked(sender: UIButton) {
         DataStorage.shared.todoList[sender.tag].check.toggle()
-        tableView.reloadData()
-        
         let encoder = JSONEncoder()
         let newTodoList = DataStorage.shared.todoList
         
         do {
             let result = try encoder.encode(newTodoList)
-            UserDefaults.standard.setValue(result, forKey: "check")
-            print(DataStorage.shared.todoList)
+            UserDefaults.standard.setValue(result, forKey: UserDefaultsKeys.todo.rawValue)
         } catch {
             print("encoding error: \(error)")
         }
+        tableView.reloadData()
     }
     
     @objc func starButtonClicked(sender: UIButton) {
         DataStorage.shared.todoList[sender.tag].star.toggle()
-        tableView.reloadData()
+        let encoder = JSONEncoder()
+        let newTodoList = DataStorage.shared.todoList
         
-        // UserDefaults - star
+        do {
+            let result = try encoder.encode(newTodoList)
+            UserDefaults.standard.setValue(result, forKey: UserDefaultsKeys.todo.rawValue)
+        } catch {
+            print(error)
+        }
+        tableView.reloadData()
     }
     
-    func initializeDataList() {
-        let decodedData = fetchDecodedData(forkey: "check")
+    func initializeDataList(iniializedWithTestData: Bool = false) {
+        if iniializedWithTestData {
+            do {
+                let encoder = JSONEncoder()
+                let result = try encoder.encode(DataStorage.shared.testData)
+                UserDefaults.standard.setValue(result, forKey: UserDefaultsKeys.todo.rawValue)
+            } catch {
+                print(error)
+            }
+        }
+        
+        let decodedData = fetchDecodedData(forkey: UserDefaultsKeys.todo.rawValue)
         DataStorage.shared.todoList = decodedData
     }
     
@@ -54,7 +70,6 @@ class TodoListTableViewController: UITableViewController {
         
         do {
             let result = try decorder.decode([DataStorage.Todo].self, from: todoData)
-            print("decoded data: \(result)")
             return result
         } catch {
             print(error)
@@ -122,9 +137,16 @@ class TodoListTableViewController: UITableViewController {
         if indexPath.section != 0 {
             if editingStyle == .delete {
                 DataStorage.shared.todoList.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .fade)
+                let encoder = JSONEncoder()
+                let newTodoList = DataStorage.shared.todoList
                 
-                // UserDefault - key: "delete"
+                do {
+                    let result = try encoder.encode(newTodoList)
+                    UserDefaults.standard.setValue(result, forKey: UserDefaultsKeys.todo.rawValue)
+                } catch {
+                    print(error)
+                }
+                tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }
     }
@@ -144,8 +166,17 @@ extension TodoListTableViewController: AddButtonDelegate {
             let alert = UIAlertController(title: "'\(newTitle)'을 추가하시겠습니까?", message: "", preferredStyle: .alert)
             let registerButton = UIAlertAction(title: "추가", style: .default) { _ in
                 DataStorage.shared.todoList.append(newTodo)
+                let encoder = JSONEncoder()
+                let newTodoList = DataStorage.shared.todoList
+                
+                do {
+                    let result = try encoder.encode(newTodoList)
+                    UserDefaults.standard.setValue(result, forKey: UserDefaultsKeys.todo.rawValue)
+                } catch {
+                    print(error)
+                }
+                
                 self.todoListTableView.reloadData()
-                // UserDefault - key: "add"
                 textField.text = ""
             }
             let cancelButton = UIAlertAction(title: "취소", style: .cancel) { _ in
