@@ -14,7 +14,7 @@ class TextFieldTableViewCell: UITableViewCell {
     
     @IBOutlet var inputTodoTextField: UITextField!
     @IBOutlet var addButton: UIButton!
-   
+    
     @IBAction func addButtonClicked(_ sender: UIButton) {
         delegate?.addButtonClicked(textField: inputTodoTextField)
     }

@@ -7,10 +7,31 @@
 
 import UIKit
 
+struct Todo {
+    var check: Bool
+    let title: String
+    var star: Bool
+}
+
 class TodoListTableViewController: UITableViewController {
     @IBOutlet var todoListTableView: UITableView!
     
-    var todo = ["그립톡 구매하기", "사이다 구매", "아이패드 최저가 알아보기", "양말"]
+    var todoList = [
+        Todo(check: false, title: "그립톡 구매하기", star: false),
+        Todo(check: false, title: "제로 콜라 구매", star: false),
+        Todo(check: false, title: "아이패드 최저가 알아보기", star: false),
+        Todo(check: false, title: "양말", star: false),
+    ]
+    
+    @objc func checkButtonClicked(sender: UIButton) {
+        todoList[sender.tag].check.toggle()
+        tableView.reloadData()
+    }
+    
+    @objc func starButtonClicked(sender: UIButton) {
+        todoList[sender.tag].star.toggle()
+        tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,19 +45,21 @@ class TodoListTableViewController: UITableViewController {
         if section == 0 {
             return 1
         } else {
-            return todo.count
+            return todoList.count
         }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TextFieldTableViewCell.identifier, for: indexPath) as? TextFieldTableViewCell else { return UITableViewCell() }
+            
             cell.delegate = self
-            cell.inputTodoTextField.placeholder = "무엇을 구매하실 건가요?"
+            cell.inputTodoTextField.placeholder = "구매하실 품목을 입력해주세요."
             cell.inputTodoTextField.tintColor = .lightGray
             cell.inputTodoTextField.keyboardType = .default
             cell.inputTodoTextField.returnKeyType = .done
             cell.inputTodoTextField.layer.cornerRadius = 10
+            
             cell.addButton.backgroundColor = .systemGray6
             cell.addButton.setTitle("추가", for: .normal)
             cell.addButton.setTitleColor(.black, for: .normal)
@@ -44,7 +67,25 @@ class TodoListTableViewController: UITableViewController {
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TodoTableViewCell.identifier, for: indexPath) as? TodoTableViewCell else { return UITableViewCell() }
-            cell.titleLabel.text = todo[indexPath.row]
+            
+            let checkImageName = todoList[indexPath.row].check ? "checkmark.square.fill" : "checkmark.square"
+            let checkImage = UIImage(systemName: checkImageName)
+            cell.checkButton.setImage(checkImage, for: .normal)
+            cell.checkButton.tintColor = .black
+            cell.checkButton.tag = indexPath.row
+            cell.checkButton.addTarget(self, action: #selector(checkButtonClicked), for: .touchUpInside)
+            
+            cell.titleLabel.text = todoList[indexPath.row].title
+            cell.titleLabel.textColor = .black
+            cell.titleLabel.font = .systemFont(ofSize: 17)
+            
+            let starImageName = todoList[indexPath.row].star ? "star.fill" : "star"
+            let starImage = UIImage(systemName: starImageName)
+            cell.starButton.setImage(starImage, for: .normal)
+            cell.starButton.tintColor = .systemRed
+            cell.starButton.tag = indexPath.row
+            cell.starButton.addTarget(self, action: #selector(starButtonClicked), for: .touchUpInside)
+            
             return cell
         }
     }
@@ -57,7 +98,7 @@ class TodoListTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.section != 0 {
             if editingStyle == .delete {
-                todo.remove(at: indexPath.row)
+                todoList.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }
@@ -66,8 +107,9 @@ class TodoListTableViewController: UITableViewController {
 
 extension TodoListTableViewController: AddButtonDelegate {
     func addButtonClicked(textField: UITextField) {
-        guard let newTodo = textField.text else { return }
-        todo.append(newTodo)
+        guard let newTitle = textField.text else { return }
+        let newTodo = Todo(check: false, title: newTitle, star: false)
+        todoList.append(newTodo)
         todoListTableView.reloadData()
         textField.text = ""
     }
@@ -76,3 +118,4 @@ extension TodoListTableViewController: AddButtonDelegate {
 protocol AddButtonDelegate: AnyObject {
     func addButtonClicked(textField: UITextField)
 }
+
